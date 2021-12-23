@@ -19,14 +19,39 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    // used to save state to keep values that you want to re-emit on screen rotations
     private val _stateFlow = MutableStateFlow(0)
     val statFlow = _stateFlow.asStateFlow()
+
+    //Used for 1 time events like don't want to show snack-bar again after screen rotation/
+    // no new navigation event after screen rotation
+    private val _sharedFlow = MutableSharedFlow<Int>(0)
+    val sharedFlow = _sharedFlow.asSharedFlow()
 
     init {
         //collectFlow()
         //collectFlatMap()
         // collectionFlowRealUseCase()
         // incrementCounter()
+        viewModelScope.launch {
+            sharedFlow.collect {
+                delay(2000L)
+                println("FLOW One: The received number is $it")
+            }
+        }
+        viewModelScope.launch {
+            sharedFlow.collect {
+                delay(3000L)
+                println("FLOW Second: The received number is $it")
+            }
+        }
+        squareNumber(3)
+    }
+
+    fun squareNumber(number: Int) {
+        viewModelScope.launch {
+            _sharedFlow.emit(number * number)
+        }
     }
 
     //State Flow & Shared Flow
