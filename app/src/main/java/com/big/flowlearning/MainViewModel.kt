@@ -3,13 +3,11 @@ package com.big.flowlearning
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
+    //Cold Flow, it doesn't do anything if there are no subscribers
     var countDownFlow: Flow<Int> = flow {
         var timeNow = 5
         emit(timeNow)
@@ -21,12 +19,19 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    private val _stateFlow = MutableStateFlow(0)
+    val statFlow = _stateFlow.asStateFlow()
+
     init {
-        //Cold Flow, it doesn't do anything if there are no subscribers
         //collectFlow()
         //collectFlatMap()
         // collectionFlowRealUseCase()
+        // incrementCounter()
+    }
 
+    //State Flow & Shared Flow
+    fun incrementCounter() {
+        _stateFlow.value += 1
     }
 
     //Flow use case
